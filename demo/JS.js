@@ -1,4 +1,9 @@
 
+
+// JavaScript 入门
+// ==========================
+
+
 // 1.
 // JavaScript是一种轻量级的脚本语言。
 // 所谓脚本语言（Script Language）是指不具备开发操作系统的能力
@@ -186,27 +191,43 @@ top: for (var i=0; i<x; i++) {
 }
 
 
-// 数据类型
-// 6种
 
-// 原始类型 primitive type
-// number
-// string
-// boolean
 
-// 合成类型 complex type
-// object
+
+
+// JavaScript 数据类型
+// ==========================
+
+// 6种数据类型
+// 原始类型（primitive type）
+// 1）number
+// 2）string
+// 3）boolean
+
+// 合成类型（complex type）
+// 4）object
 //     object
 //     array
 //     function
 
 // 特殊值
-// undefined
-// null
+// 5）undefined
+// 6）null
+
+// typeof运算符
+console.log(typeof 123); // number
+console.log(typeof '123'); // string
+console.log(typeof false); // boolean
+console.log(typeof undefined); // undefined
+console.log(typeof null); // object
+console.log(typeof {}); // object
+console.log(typeof function f(){}); // function
+console.log(typeof []); // object
 
 function isNumber(val, type) {
     return typeof val === "number";
 }
+
 
 
 // 变量声明了，但没有赋值
