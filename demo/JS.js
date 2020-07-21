@@ -228,28 +228,70 @@ function isNumber(val, type) {
     return typeof val === "number";
 }
 
+// typeof null 返回 object，是因为95年JS第一版中没有数据类型null，
+//     只把它当做object的特殊值，后来独立出来，但为了兼容之前的代码，
+//     所以返回object就没法改变了
 
 
-// 变量声明了，但没有赋值
+//null 和 undefined
+null == undefined
+console.log(undefined == null); // true
+console.log(null === undefined); // false
+console.log(null == false); // false
+console.log(undefined ==  false); // false
+
+// 95年JS诞生时，只有null，没有undefined，null是object的特殊值，
+//     可以自动转换成0。Brendan Eich觉得表示无的值不应该是对象，
+//     所以，他又设计了 undefined。
+// null 和 undefined 的区别
+//     null：表示一个空对象，转换数值时为 0
+//     undefined：表示 此处无定义，转换数值时为 NaN
+Number(null); // 0
+Number(undefined); // NaN
+
+// 返回 undefined 的典型场景
+// 1 变量声明了，但没有赋值
 var i;
-i // undefined
-
-// 调用函数时，应该提供的参数没有提供，该参数等于 undefined
+console.log(i); // undefined
+// 2 调用函数时，应该提供的参数没有提供，该参数等于 undefined
 function f(x) {
-  return x;
+    console.log(x);
 }
-f() // undefined
+f(); // undefined
+// 3 对象没有赋值的属性
+var o = new Object();
+console.log(o.p); // undefined
+// 4 函数没有返回值时，默认返回 undefined
+function f2() {};
+console.log(f2()); // undefined
 
-// 对象没有赋值的属性
-var  o = new Object();
-o.p // undefined
 
-// 函数没有返回值时，默认返回 undefined
-function f() {}
-f() // undefined
+// 布尔值
 
-// 被转成false的6个值
+// 被转成 false 的6个值
 // null, undefined, false, 0, [''|""], NaN
+console.log(Boolean(null));
+console.log(Boolean(undefined));
+console.log(Boolean(false));
+console.log(Boolean(0));
+console.log(Boolean(''));
+console.log(Boolean(""));
+console.log(Boolean(NaN));
+
+// true
+console.log(Boolean([]));
+console.log(Boolean({}));
+
+
+
+
+
+
+
+
+
+
+
 
 // 判断一个变量是否为对象
 function isObject(value) {
