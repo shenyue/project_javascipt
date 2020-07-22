@@ -932,6 +932,149 @@ function f(a, a) {
 f(1) // 1
 
 // arguments 对象
+// 由于 JS 允许函数有不定数目的参数，所以需要一种机制让函数体内部读取所有参数。
+// 这就是 arguments 的由来
+// arguments 包含了 运行时 函数的所有参数
+var f = function() {
+    console.log(arguments[0]);
+    console.log(arguments[1]);
+    console.log(arguments[2]);
+};
+f(1, 2, 3); // 1 2 3
+
+// 正常情况下，arguments 对象可以运行时修改
+var f = function(a, b) {
+    arguments[0] = 2;
+    arguments[1] = 3;
+    return a + b;
+};
+f(1, 1); // 5
+// 严格模式下，则不可以
+var f = function(a, b) {
+    'use strict'; // 严格模式
+    arguments[0] = 3;
+    arguments[1] = 2;
+    return a + b;
+};
+f(1, 1); // 2
+// 通过 arguments.length 能检查出调用函数时，传进来几个参数
+function f() {
+    return arguments.length;
+}
+console.log(f(1, 2, 3)); // 3
+console.log(f(1, 2)); // 2
+console.log(f(1)); // 1
+console.log(f()); // 0
+
+// 与数组的关系
+// arguments 像数组 但不是 它不能调用数组的方法
+
+// callee 属性
+// 返回对应的 原函数，严格模式下禁用此属性
+var f = function() {
+    console.log(arguments.callee === f); // true
+};
+f(); // true
+
+
+// 闭包（closure）
+// JS 的链式作用域（chain scope），父中的所有变量对子可见。
+//    子中的属性对父则不可见
+// 闭包的最大特点，就是它可以记住其诞生环境
+// 闭包的作用：1 是读取函数内部的变量；
+//           2 是可以使其诞生环境一直存在
+//           3 封装对象的 私有属性 和 方法
+// 1
+function f1() {
+    var a = 999;
+    function f2() {
+        console.log(a);
+    }
+    return f2;
+}
+var result = f1();
+result(); // 999
+// 2
+function createIncrementor(start) {
+    return function() {
+        return start++;
+    };
+}
+var inc = createIncrementor(5);
+console.log(inc()); // 6
+console.log(inc()); // 7
+console.log(inc()); // 8
+// 3
+function Person(name) {
+    var _age;
+    function setAge(val) {
+        _age = val;
+    }
+    function getAge() {
+        return _age;
+    }
+
+    return {
+        name: name,
+        getAge: getAge,
+        setAge: setAge
+    };
+}
+var p = Person('张三');
+p.setAge(40);
+console.log(p.name);
+console.log(p.getAge());
+// 注意，外层函数每次运行都会生成新的闭包，而这个闭包又会保存
+//    外部函数的内部变量，所以内存小号很大。不能滥用，可能会
+//    造成网页性能问题。
+
+
+// 立即调用的函数表达式（IIFE）
+// Immediately-Invoked Function Expression
+// 有些函数定义出来想要立即调用
+// 但是这样写会报错 function f() {}();
+// 因为 function 关键字，既可以当做表达式，也可以当做语句
+// 语句
+function f() {}
+// 表达式
+var f = function() {};
+// 为了避免歧义，JS 引擎把 出现在行首function一律解析成语句。
+//    这就是为什么 unction f() {}(); 报错
+// 为了解决此问题，只要function不在行首就可以
+(function f() {}());
+(function f() {})();
+var i = function() {}();
+true && function() {}();
+0, function() {}();
+!function() {}();
+// 以上都可以
+// 通常只对匿名函数使用IIFE，目的有2个
+//    1 不必为函数命名，避免污染全局变量
+//    2 封装私有变量
+// 2中写法
+// 写法一
+var tmp = newData;
+processData(tmp);
+storeData(tmp);
+// 写法二
+(function() {
+    var tmp = newData;
+    processData(tmp);
+    storeData(tmp);
+}());
+// 写法二更好，避免污染了全局变量
+
+
+ // eval命令
+
+
+
+
+
+
+
+
+
 
   
 
