@@ -283,6 +283,237 @@ console.log(Boolean([]));
 console.log(Boolean({}));
 
 
+// 数值
+// -------------------------------
+
+// JS内部，所有数字都是以64位浮点数存储的，整数也如此
+console.log(1 === 1.0); // true
+console.log((0.1 + 0.2) === 0.3); // false
+console.log(0.3 / 0.1); // 2.9999999999999996
+console.log((0.3 - 0.2) === (0.2 - 0.1)); // false
+
+// 数值精度
+// IEEE 754 JS 浮点数的64个二进制位，从左到右的组成
+// 第 1 位：符号位 1，正数；2，负数
+// 第 2 ~ 12 （11）位：指数部分
+// 第 13 ~ 64 （52）位：小数部分
+
+// 指数部分取值为（0 ~ 2047）
+// IEEE 754 规定，如果指数部分在 0 ~ 2047（不含两个端点）之间，
+//     那么有效数字的第一位默认总是 1，不保存在64位浮点数之中。
+//     因此 JS 提供的有效数字最长为 53 个二进制位。
+// 进度最多到 53 个二进制位，-2^53 ~ 2^53
+// 一个数值 在JS内部的表示形式
+// (-1)^符号位 * 1.xx...xx * 2^指数部分
+// 绝对值小于 2^53 的 整数 都可以精确表示
+console.log(Math.pow(2, 53)); // 9,007,199,254,740,992
+// 大于 2^53 的 整数运算结果开始出错
+console.log(Math.pow(2, 53) + 1); // 9007199254740992
+console.log(Math.pow(2, 53) + 2); // 9007199254740994
+console.log(Math.pow(2, 53) + 3); // 9007199254740996
+console.log(Math.pow(2, 53) + 4); // 9007199254740996
+console.log(Math.pow(2, 53) + 5); // 9007199254740996
+console.log(Math.pow(2, 53) + 6); // 9007199254740998
+// 多出来的数字无法保存，变成0
+console.log(9007199254740992111); // 9007199254740992000
+// 2^53 是一个16位的十进制数，JS 对15位以内的十进制数都可以精确处理
+// 以上说的都是数值精度问题
+
+// 数值范围
+// JS 能表示的数值范围 2^1024 ~ 2^-1023之间（开区间）。
+// 如果一个数大于 2^1024 则正向溢出，返回 Infinity
+console.log(Math.pow(2, 1024)); // Infinity
+// n^-m 负指数相当于 1/n^m
+console.log(Math.pow(2, -1023)); // 1.1125369292536007e-308
+console.log(Math.pow(2, -1074)); // 5e-324
+console.log(Math.pow(2, -1075)); // 0
+console.log(Number.MAX_VALUE); // 1.7976931348623157e+308
+console.log(Number.MIN_VALUE); // 5e-324
+
+// 数值表示
+// 采用科学计数法的情况
+// 1 小数点前数字多于21位
+// 2 小数点后0多于5个
+console.log(123456789123456789123); // 123456789123456800000
+console.log(1234567891234567891230); // 1.234567891234568e+21
+console.log(0.000009); // 0.000009
+console.log(0.0000009); // 9e-7
+console.log(0.0000091); // 0.0000091
+
+// 数值进制
+// 十进制：12
+// 八进制：0o 或 0O前缀 eg: 0o12, 0O12
+// 二进制：0b 或 0B前缀 eg: 0b01, 0B01
+// 十六进制：0x 或 0X前缀 eg: 0xF2, 0XF2
+
+// 特殊数值
+// 正0 和 负0
+// 因为 JS 数值 64位中 有一个符号位，所以任何正数值都会有对应的负数值，0也一样
+console.log(0 === -0); // true
+console.log(0 === +0); // true
+console.log(+0 === -0); // true
+
+// 当+-0作为除数的时候，返回值不一样
+console.log((1 / +0)); // Infinity
+console.log((1 / -0)); // -Infinity
+console.log((1 / +0) === (1 / -0)); // false
+
+
+
+// NaN 非数值 (Not a Number)
+console.log(5 - 'x'); // NaN
+console.log(Math.acos(2)); // NaN
+console.log(Math.log(-1)); // NaN
+console.log(Math.sqrt(-1)); // NaN
+console.log(0 / 0); // NaN
+console.log(NaN + 32); // NaN
+console.log(NaN - 32); // NaN
+console.log(NaN * 32); // NaN
+console.log(NaN / 32); // NaN
+console.log(NaN % 32); // NaN
+
+console.log(typeof NaN); // number
+console.log(NaN === NaN); // false
+console.log([NaN].indexOf(NaN)); // -1
+console.log(Boolean(NaN)); // false
+
+
+
+// 无穷 Infinity
+// Infinity与NaN比较，总是返回false
+console.log(Infinity > NaN); // false
+console.log(-Infinity > NaN); // false
+console.log(Infinity < NaN); // false
+console.log(-Infinity < NaN); // false
+console.log(Math.Infinity === -Math.Infinify); // false
+
+console.log(Math.pow(2, 1024)); // Infinity
+console.log(1 / 0); // Infinity
+console.log(1 / -0); // -Infinity
+console.log(-1 / -0); // Infinity
+
+console.log(Infinity + 5); // Infinity
+console.log(Infinity - 5); // Infinity
+console.log(Infinity * 5); // Infinity
+console.log(Infinity / 5); // Infinity
+console.log(Infinity % 5); // NaN
+
+console.log(5 + Infinity); // Infinity
+console.log(5 - Infinity); // -Infinity
+console.log(5 * Infinity); // Infinity
+console.log(5 / Infinity); // 0
+console.log(5 % Infinity); // 5
+
+console.log(0 + Infinity); // Infinity
+console.log(0 - Infinity); // -Infinity
+console.log(0 * Infinity); // NaN
+console.log(0 / Infinity); // 0
+console.log(0 % Infinity); // 0
+
+console.log(Infinity + 0); // Infinity
+console.log(Infinity - 0); // Infinity
+console.log(Infinity * 0); // NaN
+console.log(Infinity / 0); // Infinity
+console.log(Infinity % 0); // NaN
+
+console.log(Infinity + Infinity); // Infinity
+console.log(Infinity - Infinity); // NaN
+console.log(Infinity * Infinity); // Infinity
+console.log(Infinity / Infinity); // NaN
+console.log(Infinity % Infinity); // NaN
+
+console.log(null + Infinity); // Infinity
+console.log(null - Infinity); // -Infinity
+console.log(null * Infinity); // NaN
+console.log(null / Infinity); // 0
+console.log(null % Infinity); // 0
+
+console.log(Infinity + null); // Infinity
+console.log(Infinity - null); // Infinity
+console.log(Infinity * null); // NaN
+console.log(Infinity / null); // Infinity
+console.log(Infinity % null); // NaN
+
+console.log(undefined + Infinity); // NaN
+console.log(undefined - Infinity); // NaN
+console.log(undefined * Infinity); // NaN
+console.log(undefined / Infinity); // NaN
+console.log(undefined % Infinity); // NaN
+
+console.log(Infinity + undefined); // NaN
+console.log(Infinity - undefined); // NaN
+console.log(Infinity * undefined); // NaN
+console.log(Infinity / undefined); // NaN
+console.log(Infinity % undefined); // NaN
+
+
+// 与数值相关的方法
+// parseInt()：将字符串转10进制整数
+// 有空格去空格，后字符串转数值，
+console.log(parseInt('123')); // 123
+console.log(parseInt('    123   ')); // 123
+// 有小数舍弃
+console.log(parseInt(1.23)); // 1
+console.log(parseInt('1.23')); // 1
+// 有非数字部分，解析到此位置
+console.log(parseInt('8a')); // 8
+console.log(parseInt('12**')); // 12
+console.log(parseInt('12.34')); // 12
+console.log(parseInt('15e2')); // 15
+console.log(parseInt('15px')); // 15
+// 开头非数字，无数字，返回NaN
+console.log(parseInt('abc')); // NaN
+console.log(parseInt('.3')); // NaN
+console.log(parseInt('')); // NaN
+console.log(parseInt('+')); // NaN
+
+console.log(parseInt('+1')); // 1
+
+// 进制
+console.log(parseInt('0b1')); // 0
+console.log(parseInt('0o1')); // 0
+// 仅0x的16进制开头可解析成数值，上边2进制，8进制则不行
+console.log(parseInt('0x1')); // 1
+
+console.log(parseInt(0b1000)); // 8
+console.log(parseInt(08)); // 8
+console.log(parseInt(0x8)); // 8
+
+console.log(parseInt(1000000000000000000000.5)); // 1
+console.log(parseInt('1e+21')); // 1
+console.log(parseInt(0.0000008)); // 8
+console.log(parseInt('8e-7')); // 8
+
+// 进制转换
+console.log(parseInt('1000')); // 1000
+// 等同于
+console.log(parseInt('1000', 10)); // 1000
+
+console.log(parseInt('1000', 2)); // 8
+console.log(parseInt('1000', 6)); // 216
+console.log(parseInt('1000', 8)); // 512
+// 进制参数：2~36范围内有意义，其余忽略
+console.log(parseInt('10', 37)); // NaN
+console.log(parseInt('10', 1)); // NaN
+console.log(parseInt('10', 0)); // 10
+console.log(parseInt('10', null)); // 10
+console.log(parseInt('10', undefined)); // 10
+// 对于指定进制，从最高位开始，只返回可以转换的数值
+console.log(parseInt('1546', 2)); // 1
+console.log(parseInt('546', 2)); // NaN
+
+console.log(parseInt('011', 2)); // 3
+console.log(parseInt(011, 2)); // NaN
+
+
+
+
+
+
+
+
+
+
 
 
 
