@@ -1069,35 +1069,178 @@ storeData(tmp);
 
 
 
+ // 数组
+ // -------------------------------
+ // 定义
+ var arr = ['a', 'b', 'c']; 
+ var arr = [];
+ arr[0] = 'a';
+ arr[1] = 'b';
+ arr[2] = 'c';
+ var arr = [
+    {a: 1},
+    [1, 2, 3],
+    function() {return true;}
+];
+// 多维数组
+var a = [[1, 2], [3, 4]];
+console.log(typeof [1, 2, 3]); // object
+console.log(Object.keys(arr)); // ["0", "1", "2"]
+// 数组的键名其实也是字符串，非字符串会转成字符串
+console.log(arr['0']); // {a:1}
+
+// length 属性
+// JS 使用 32 位整数，保存元素个数，也就是说，数组成员最多有 2^32-1 个
+// length 的最大值 4,294,967,295，length 可写
+// 数组的键值不需要连续，数组是一种动态结构，可随时增减元素
+var arr = ['a', 'b'];
+console.log(arr.length); // 2
+arr[1000] = 'e';
+console.log(arr.length); // 1001
+// length 可写
+arr.length = 0;
+console.log(arr); // []
+arr.length = 2;
+console.log(arr[1]); // undefined
+
+// 设置负值
+[].length = -1; // RangeError: Invalid array length
+// 数组元素个数大于等于2的32次方
+[].length = Math.pow(2, 32); // RangeError: Invalid array length
+// 设置字符串
+[].length = 'abc'; // RangeError: Invalid array length
+var a = [];
+a['p'] = 'abc';
+console.log(a.length); // 0
+a[2.1] = 'abc';
+console.log(a.length); // 0
+
+var arr = [];
+arr[-1] = 'a';
+arr[Math.pow(2, 32)] = 'b';
+console.log(arr.length); // 0
+console.log(arr[-1]); // a
+console.log(arr[4294967296]); // b
+
+// in 运算符
+// 检查某个键名是否存在
+var arr = ['a', 'b', 'c'];
+console.log(2 in arr); // true
+console.log('2' in arr); // true
+console.log(4 in arr); // false
+
+// for in 循环遍历数组
+var a = [1, 2, 3];
+a.foo = true;
+for (var i in a) {
+  console.log(a[i]); // 1 2 3 true
+}
+
+// while 遍历数组
+var a = [1, 2, 3];
+
+// for循环
+for(var i = 0; i < a.length; i++) {
+  console.log(a[i]);
+}
+
+// while循环
+var i = 0;
+while (i < a.length) {
+  console.log(a[i]);
+  i++;
+}
+var l = a.length;
+while (l--) {
+  console.log(a[l]);
+}
+
+// forEach 遍历数组
+var colors = ['r', 'g', 'b'];
+colors.forEach(function(color) {
+    console.log(color);
+});
+
+// 数组的空位
+// 空位不影响 length
+var a = [1, , 1];
+console.log(a.length); // 3
+// 逗号在最后，不会产生空位
+var a = [1, 1,];
+console.log(a.length); // 2
+// 空位返回 undefined
+var a = [, , ,];
+console.log(a[1]); // undefined
+// delete 删除一个元素，会产生空位，但不影响 length
+var a = [1, 2, 3];
+delete a[1];
+console.log(a[1]); // undefined
+console.log(a.length); // 3
+
+// 空位遍历会被跳过
+var a = [, , ,];
+a.forEach(function (x, i) {
+  console.log(i + '. ' + x); // 不产生任何输出
+})
+for (var i in a) {
+  console.log(i); // 不产生任何输出
+}
+console.log(Object.keys(a)); // []
+
+// undefined 则不会被跳过 
+var a = [undefined, undefined, undefined];
+a.forEach(function (x, i) {
+  console.log(i + '. ' + x);
+});
+// 0. undefined
+// 1. undefined
+// 2. undefined
+for (var i in a) {
+  console.log(i);
+}
+// 0
+// 1
+// 2
+console.log(Object.keys(a));
+// ['0', '1', '2']
+
+// 类数组
+function args() { return arguments }
+var arrayLike = args('a', 'b');
+console.log(arrayLike[0]); // 'a'
+console.log(arrayLike.length); // 2
+console.log(arrayLike instanceof Array); // false
+
+// DOM元素集
+var elts = document.getElementsByTagName('h3');
+console.log(elts.length); // 3
+console.log(elts instanceof Array); // false
+
+// 字符串
+console.log('abc'[1]); // 'b'
+console.log('abc'.length); // 3
+console.log('abc' instanceof Array); // false
+
+// 类数组的遍历
+// 1
+var arrayLike = args('a', 'b');
+var arr = Array.prototype.slice.call(arrayLike);
+arr.forEach(function (chr) {
+    console.log(chr);
+});
+// a b
+// 2
+function print(value, index) {
+    console.log(index + ' : ' + value);
+}
+Array.prototype.forEach.call(arrayLike, print);
+
+Array.prototype.forEach.call('abc', function (chr) {
+    console.log(chr);
+});
+// a b c
 
 
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 数组
-// -------------------------------
 
 
 
