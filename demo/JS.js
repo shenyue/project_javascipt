@@ -506,6 +506,456 @@ console.log(parseInt('011', 2)); // 3
 console.log(parseInt(011, 2)); // NaN
 
 
+// parseFloat()：将字符串转10进制浮点数
+// 基本同 parseInt()
+
+// isNaN()：判断一个值是否为NaN
+console.log(isNaN(NaN)); // true
+console.log(isNaN(123)); // false
+
+// isNaN只对数值有效，所以先把字符串转成数值。
+console.log(isNaN('Hello')); // true
+// 相当于
+console.log(isNaN(Number('Hello'))); // true
+
+console.log(isNaN({})); // true
+// 相当于
+console.log(isNaN(Number({}))); // true
+console.log(isNaN(['xyz'])); // true
+// 相当于
+console.log(isNaN(Number(['xyz']))); // true
+
+// 但是对空数组 或 只有一个数值成员的数组返回 false
+console.log(isNaN([])); // false
+console.log(isNaN([123])); // false
+console.log(isNaN(['123'])); // false
+
+
+function myIsNaN(value) {
+    return typeof value === 'number' && isNaN(value);
+  }
+function myIsNaN(value) {
+    return value !== value;
+}
+console.log(myIsNaN(NaN)); // true
+console.log(myIsNaN(1)); // false
+console.log(myIsNaN('1')); // false
+console.log(myIsNaN(true)); // false
+console.log(myIsNaN(undefined)); // false
+console.log(myIsNaN(null)); // false
+console.log(myIsNaN({})); // false
+console.log(myIsNaN([])); // false
+
+// isFinite() 返回一个布尔值，表示某个值是否为正常的数值
+console.log(isFinite(Infinity)); // false
+console.log(isFinite(-Infinity)); // false
+console.log(isFinite(NaN)); // false
+console.log(isFinite(undefined)); // false
+// 除了以上四个值之外，其他均返回true
+
+console.log(isFinite(null)); // true
+console.log(isFinite(-1)); // true
+
+
+
+// 字符串
+// -------------------------------
+//多个排列在一起的字符
+'abc'
+"abc"
+'I\'m fine'
+"I'm fine"
+"\"Hello World\""
+// 多行书写采用反斜杠，反斜杠后边必须是换行符
+var longString = " Hello \
+                   World \
+                   ! \
+                 ";
+// 多行最好还是字符串拼接
+var longString = " Hello "
+               + "World "
+               + "!";
+
+// 转义
+// \0 ：null（\u0000）
+// \b ：后退键（\u0008）
+// \f ：换页符（\u000C）
+// \n ：换行符（\u000A）
+// \r ：回车键（\u000D）
+// \t ：制表符（\u0009）
+// \v ：垂直制表符（\u000B）
+// \' ：单引号（\u0027）
+// \" ：双引号（\u0022）
+// \\ ：反斜杠（\u005C）
+
+// 特殊用法 
+// Unicode码点
+// \HHH 3个8进制数（000 ~ 377），只能输出256中字符
+console.log('\251'); // ©
+// \xHH 2个16进制数（00 ~ FF），只能输出256中字符
+console.log('\xA9'); // ©
+// \uXXXX 4个16进制数（0000 ~ FFFF）
+console.log('\u00A9'); // ©
+
+console.log('\\'); // \
+
+// 字符串 与 数组
+// 字符歘可以看成字符数组，但不能以数组方式设置其值
+var s = 'Hello';
+console.log(s[0]); // H
+console.log(s[1]); // e
+console.log(s[3]); // l
+
+// 如果下标超出范围 或者 非数字，返回 undefined
+console.log(s[5]); // undefined
+console.log(s[-1]); // undefined
+console.log(s['x']); // undefined
+
+s[2] = 'X';
+console.log(s); // Hello
+
+// length 属性
+// length属性无法改变
+console.log(s.length); // 5
+s.length = 7;
+console.log(s.length); // 5
+
+
+// 字符集
+// JS 使用 Unicode字符集，JS引擎内部所有字符都用Unicode字符集
+// JS 允许直接使用 Unicode码点表示字符，包括变量名。eq：\u00A9 版权符号
+// JS 对于码点在 U+10000 ~ U+10FFFF之间的字符，JS认为他是两个字符（length=2）,
+//    所以，JS返回的字符长度可能不正确。
+
+
+// Base64 转码
+// 有时，文本里出现一些不可打印的字符，如ASCII码的 0 ~ 31符号都无法打印，
+//     这时可以用base64转码。
+// 还有时，需要以文本格式传递二进制数据，也可以Base64转码。
+// Base64 是一种编码方法，可以将任意值转成 0~9，A~Z，a~z，+，/ 这64个字符，
+//     目的是不出现特殊字符，简化程序处理。
+// JS 原生 Base64 方法，这2个方法不适合非ASCII码的字符
+// btoa()：任意值转 Base64
+// atob()：Base64 转原值
+// btoa('你好'); // 报错
+
+// 将非ASCII码字符转Base64
+function b64Encode(str) {
+    return btoa(encodeURIComponent(str));
+}
+function b64Decode(str) {
+    return decodeURIComponent(atob(str));
+}
+console.log(b64Encode('你好')); // JUU0JUJEJUEwJUU1JUE1JUJE
+console.log(b64Decode('JUU0JUJEJUEwJUU1JUE1JUJE')); // 你好
+ 
+
+
+
+
+// 对象
+// -------------------------------
+// 键名以 ES6 的 Symbol值 形式
+var obj = {
+    foo: 'Hello',
+    bar: 'World'
+};
+var obj = {
+    'foo': 'Hello',
+    'bar': 'World'
+};
+var obj = {
+    1: 'Hello',
+    2: 'World',
+    '1p': '1P',
+    'h w': 'H W',
+    'p+q': 'P+Q'
+};
+// 以上这些key都可以
+// 但下边的不行
+// var obj = {
+//     1p: 'Hello'
+// };
+
+var obj = {
+    p: function(x) {
+        return 2 * x;
+    }
+};
+console.log(obj.p(1)); // 2 
+
+var o1 = {};
+var o2 = { bar: 'Bar' };
+o1.foo = o2;
+console.log(o1.foo.bar); // Bar
+
+var obj = {
+    p: 123,
+    m: function () {}, // 此逗号可有可无
+};
+
+// 对象的引用
+// 多个变量指向同一个地址，改变其中任一一个对象的属性，都会影响其他对象。
+var o1 = {};
+var o2 = o1;
+o1.a = 1;
+console.log(o2.a);
+o2.b = 2;
+console.log(o1.b);
+o1 = 1; // o1 解除了对原来的引用，所以 o2 不受影响
+console.log(o2);
+
+var x = 1;
+var y = x;
+x = 2;
+console.log(y); // 1
+
+// 表达式还是语句？
+{ foo: 'foo'}
+// JS 引擎的做法是，如果遇到这种情况，一律解释为代码块
+// 想要其为 表达式，采用()包裹
+({foo: 'foo'})
+
+// 属性操作
+// 属性读取
+var obj = {
+    p: 'Hello World'
+};
+console.log(obj.p); // Hello World
+console.log(obj['p']); // Hello World
+// 采用方括号运算符，键名必须卸载引号里，否则会被当成变量
+var foo = 'bar';
+var obj = {
+    foo: 1,
+    bar: 2
+};
+console.log(obj[foo]); // 2
+// 方括号内部，可以使用表达式
+obj['foo' + 'bar'];
+obj[3 + 3];
+// 数字键可以不加引号
+var obj = {
+    0.7: 'Hello World'
+}
+console.log(obj[0.7]); // Hello World
+console.log(obj['0.7']); // Hello World
+// 数值键 不能使用 .运算符
+var obj = {
+    123: '123'
+};
+// console.log(obj.123); // 报错
+console.log(obj[123]);
+
+
+// 属性赋值
+var obj = {};
+obj.foo = 1;
+obj['bar']  = 2;
+console.log(obj.foo); // 1
+console.log(obj.bar); // 2
+
+
+// 属性查看
+console.log(Object.keys(obj)); // foo bar
+
+
+// 属性删除
+console.log(delete obj.foo); // true 
+// delete 遇到不能删除的属性返回 返回false，否则返回 true
+// delete 只能删除对象自身的属性 
+console.log(Object.keys(obj)); // bar
+console.log(obj.foo); // undefined
+
+
+// 属性是否存在
+console.log('foo' in obj); // false
+console.log('bar' in obj); // true
+var obj = {};
+if ('toString' in obj) {
+  console.log(obj.hasOwnProperty('toString')) // false
+}
+
+
+// 属性遍历
+var obj = {a: 1, b: 2, c: 3};
+for (var i in obj) {
+    console.log('键名：', i);
+    console.log('键值：', obj[i]);
+}
+
+
+// with 语句
+// 建议不要使用
+with (obj) {
+
+}
+
+
+// 函数
+// -------------------------------
+// 函数声明的3种方法
+// 1 function命令
+function f1() {}
+// 2 函数表达式 Function Expression
+var f1 = function() {};
+// 3 Function构造函数
+var f1 = new Function();
+// 函数重复声明，后面的覆盖前面的
+
+// JS 将函数看成一种值，可以赋值给 变量 和 对象属性，可以当 参数 和 返回值
+
+// 函数名提升
+// 同变量名提升一个道理
+f();
+function f() {}
+
+// 函数的 属性 和 方法
+// name 属性
+console.log(f.name); // f
+// length 属性
+// 定义的参数个数
+function f(x, y) {}
+console.log(f.length); // 2
+
+// toString()
+// 返回 function 的源码
+console.log(f.toString()); // function f(x, y) {}
+// 原生函数调用toString()返回[native code]
+
+
+// 函数作用域 （scope）
+// ES5 规范定义了 全局作用域 和 函数作用域 
+// ES6 增加了 块级作用域
+// 全局变量 （global variable）：顶层函数外部声明的变量为全局变量
+var g = 1;
+function f() {
+    console.log(g); // 1
+}
+f();
+// 函数内部定义的变量叫 局部变量（local variable）
+function f() {
+    var l = 1;
+}
+console.log(l); // l is not defined
+// 同名局部变量覆盖全局变量
+function f() {
+    var g = 5;
+    console.log(g); // 5
+}
+f();
+console.log(g); // 1
+
+// 函数内部变量提升，同理
+
+// 函数本身的作用域
+var a = 1;
+var x = function() {
+    console.log(a); // 此处的 a 为全局变量a
+};
+function f() {
+    var a = 2;
+    x(); // 不会使用局部变量 a
+}
+console.log(f()); // 1
+
+var x = function() {
+    console.log(aa); // 此处 aa 未定义
+};
+function y(f) {
+    var aa = 2;
+    f(); // 不会使用局部变量 aa
+}
+y(x); // aa is not defined
+
+function foo() {
+    var x = 1;
+    function bar() {
+        console.log(x); // 此处使用局部变量 x
+    }
+    return bar;
+}
+var x = 2;
+var f = foo(); // 不会使用全局变量 x
+console.log(f()); // 1
+
+
+// 参数
+// 参数的省略
+function f(a, b) {
+    return a;
+}
+console.log(f(1, 2, 3)); // 1
+console.log(f(1)); // 1
+console.log(f()); // undefined
+console.log(f.length); // 2
+
+// console.log(f(, 1)); // Uncaught SyntaxError: Unexpected token ','
+console.log(f(undefined, 1)); // undefined
+
+
+// 参数传递方式
+// 原值类型的值，值传递（passes by value），函数体内修改参数不影响外部。
+var p = 2;
+function f(p) {
+    p = 3;
+    console.log(p); // 3
+}
+f(p);
+console.log(p); // 2
+
+// 如果是复合类型的值，引用传递（pass by reference），内部修改参数会影响外部
+var obj = { p: 1 };
+function f(o) {
+    o.p = 2;
+}
+f(obj);
+console.log(obj.p); // 2
+// 但如果是替换掉整个参数，则不会影响外部，因为引用指向的地址变了
+var obj = { p: 1 };
+function f(o) {
+    o = { x: 1 };
+}
+f(obj);
+console.log(obj.p);
+
+// 同名参数
+// 以后边的为准
+function f(a, a) {
+    console.log(a);
+}
+f(1, 2); // 2
+f(1); // undefined
+
+function f(a, a) {
+    console.log(arguments[0]);
+}
+f(1) // 1
+
+// arguments 对象
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 数组
+// -------------------------------
+
 
 
 
