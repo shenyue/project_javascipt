@@ -1552,12 +1552,168 @@ console.log(void(0)); // undefined
 
 // 语法专题
 // ==========================
-
 // 数据类型转换
 // --------------------------
+// JS 是一种动态类型的语言，由于变量没有类型固定，所以只能在运行时才能知道其类型
+// 强制转换
+// 主要 使用 Number()，String()，Boolean()
+// Number()
+// 原始类型值
+console.log(Number(324)); // 324
+console.log(Number('324')); // 324
+console.log(Number('324abc')); // NaN
+console.log(Number('')); // 0
+console.log(Number(true)); // 1
+console.log(Number(false)); // 0
+console.log(Number(undefined)); // NaN
+console.log(Number(null)); // 0
+console.log(parseInt('42 cats')); // 42
+console.log(Number('42 cats')); // NaN
+console.log(parseInt('\t\v\r12.34\n')); // 12
+console.log(Number('\t\v\r12.34\n')); // 12.34
+// 对象
+console.log(Number({ a: 1 })); // NaN
+console.log(Number([1, 2, 3])); // NaN
+console.log(Number([5])); // 5
+
+
+// String()
+// 原始类型值
+console.log(String(5)); // '5'
+console.log(String('abc')); // 'abc'
+console.log(String(true)); // 'true'
+console.log(String(undefined)); // 'undefined'
+console.log(String(null)); // 'null'
+// 对象
+console.log(String({ a: 'a' })); // [object Object]
+console.log(String([1, 2, 3])); // 1,2,3
+
+
+// Boolean()
+console.log(Boolean(undefined)); // false
+console.log(Boolean(null)); // false
+console.log(Boolean(0)); // false
+console.log(Boolean(NaN)); // false
+console.log(Boolean('')); // fasle
+console.log(Boolean(true)); // true
+console.log(Boolean(false)); // false
+console.log(Boolean({})); // true
+console.log(Boolean([])); // true
+console.log(Boolean(new Boolean(false))); // true
+
+// 自动转换
+// 3种情况会自动转换
+// 1 不同类型 互相运算
+console.log(123 + 'abc'); // 123abc
+// 2 对非布尔值类型求布尔值
+if ('abc') console.log('abc'); // abc
+// 3 对非数值类型的值使用一元运算符
+console.log(+ { foo: 'bar' }); // NaN
+console.log(- [1, 2, 3]); // NaN
+// 自动转换为布尔值
+console.log(!undefined); // true
+console.log(!null); // true
+console.log(!0); // true
+console.log(!NaN); // true
+console.log(!''); // true
+// 自动转换为字符串
+console.log('5' + 1); // 51 
+console.log('5' + true); // 5true 
+console.log('5' + false); // 5false
+console.log('5' + {}); // 5[object Object]
+console.log('5' + []); // 5
+console.log('5' + function() {}); // 5function() {} 
+console.log('5' + undefined); // 5undefined
+console.log('5' + null); // 5null
+// 自动转换成数值
+console.log('5' - '2'); // 3 
+console.log('5' * '2'); // 10 
+console.log(true - 1); // 0
+console.log(false - 1); // -1
+console.log('1' - 1); // 0
+console.log('5' * []); // 0 
+console.log(false / '5'); // 0
+console.log('abd' - 1); // NaN
+console.log(null + 1); // 1 
+console.log(undefined + 1); // NaN 
+
+
+
+
+
+
+
+
 
 // 错误处理机制
 // --------------------------
+
+var err = new Error('出错了');
+console.log(err.name); // Error
+console.log(err.message); // 出错了
+console.log(err.stack); // Error: 出错了 at <anonymous>:1:11
+
+function throwit() {
+    throw new Error('');
+}
+function catchit() {
+    try {
+        throwit();
+    } catch(e) {
+        console.log(e.message);
+    }
+}
+catchit();
+
+// 原生错误类型
+// SyntaxError 对象
+// ReferenceError 对象
+// RangeError 对象
+// TypeError 对象
+// URIError 对象
+// EvalError 对象
+
+// 自定义错误
+function UserError(message) {
+    this.message = message || '默认信息';
+    this.name = 'UserError';
+}
+UserError.prototype = new Error();
+UserError.prototype.constructor = UserError;
+new UserError('这是自定义的错误对象');
+
+// throw 语句
+throw new UserError('出错了');
+throw 'Error!';
+throw 42;
+throw true;
+throw {
+    toString: function() {
+        return 'Error!';
+    }
+};
+
+// try catch 语句
+try {
+    throw new Error('出错了');
+} catch(e) {
+    console.log(e.name);
+    console.log(e.message);
+    console.log(e.stack);
+} finally {
+    console.log('exec finaly');
+}
+
+// finaly 语句
+function f() {
+    try {
+        console.log('line');
+        return 'res';
+    } finally {
+        console.log('exec finaly');
+    }
+}
+console.log(f());
 
 
 // 编程风格
@@ -1566,6 +1722,40 @@ console.log(void(0)); // undefined
 
 // console对象与控制台
 // --------------------------
+// console 对象
+// 静态方法
+console.log('1');
+console.info('2');
+console.debug('3');
+// %s 字符串
+// %d 整数
+// %i 整数
+// %f 浮点数
+// %o 对象的链接
+// %c CSS 格式字符串
+console.log('%s', '11');
+
+console.warn();
+console.error();
+console.table();
+var languages = [
+    { name: "JavaScript", fileExtension: ".js" },
+    { name: "TypeScript", fileExtension: ".ts" },
+    { name: "CoffeeScript", fileExtension: ".coffee" }
+];
+console.table(languages);
+console.count(); 
+console.dir();
+console.dirxml();
+console.assert();
+console.time();
+console.timeEnd();
+console.group();
+console.groupEnd();
+console.groupCollapsed();
+console.trace();
+console.clear();
+
 
 
 
