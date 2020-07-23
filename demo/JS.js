@@ -1245,6 +1245,476 @@ Array.prototype.forEach.call('abc', function (chr) {
 
 
 
+// 运算符
+// ==========================
+// 算数运算符
+// --------------------------
+// 加法
+console.log(1 + 1); // 2
+console.log(true + true); // 2
+console.log(1 + true); // 2
+console.log('a' + 'bc'); // abc
+console.log(1 + 'a'); // 1a
+console.log(false + 'a'); // falsea
+console.log('3' + 4 + 5); // 345
+console.log(3 + 4 + '5'); // 75
+console.log(1 - '2'); // -1
+console.log(1 * '2'); // 2
+console.log(1 / '2'); // 0.5
+
+// 对象相加 
+// 首先对象调动自身的 valueOf()，再调用 toString()
+var obj = { p: 1 };
+console.log(obj + 2); // [object Object]2
+console.log(obj.valueOf()); // { p: 1 }
+console.log(obj.valueOf().toString()); // [object Object]
+// 我们可以自定义对象的 valueOf() 和 toString()
+var obj = {
+    valueOf: function() {
+        return 1;
+    },
+    toString: function() {
+        return 'hello';
+    }
+};
+console.log(obj + 2); // 3
+// 以上由于 valueOf() 返回的是原始类型的值，所以不再调用 toString() 
+
+// 但 Date 对象的实例。拼接时 优先执行 toString()
+var obj = new Date();
+obj.valueOf = function() { return 1; };
+obj.toString = function() { return 'hello'; };
+console.log(obj + 2); // hello2
+
+// valueOf() 返回的是复合类型的值，所以调用 toString() 
+var obj = {
+    valueOf: function() {
+        return { p: 'a' };
+    },
+    toString: function() {
+        return 'hello';
+    }
+};
+console.log(obj + 2); // hello2
+// 由于 toString() 是字符串 hello，所以拼接 2
+
+// 余数运算符 %
+console.log(12 % 5); // 2
+// 运算结果的正负，由第一个云算子决定
+console.log(-1 % 2); // -1
+console.log(1 % -2); // 1
+// 余数运算可以用于浮点数，但是结果不一定准确
+
+// 自增自减运算符
+var x = 1;
+console.log(++x); // 2
+console.log(--x); // 1
+console.log(x++); // 1
+console.log(x--); // 2
+console.log(x); // 1
+
+// 数值运算符 + ，负数值运算符 -
+
+// 指数运算符 **
+console.log(2 ** 4); // 16
+// 指数运算符是从右往左算的
+console.log(2 ** 3 ** 2); // 512
+// 相当于 2 ** (3 ** 2) 即 2 ** 9
+
+// 赋值运算符
+var x = 1, y = 2;
+console.log(x += y); // 3
+console.log(x -= y); // 1
+console.log(x *= y); // 2
+console.log(x /= y); // 1
+console.log(x %= y); // 1
+console.log(x **= y); // 1
+console.log(x >>= y); // 0
+console.log(x <<= y); // 0
+console.log(x >>>= y); // 0
+console.log(x &= y); // 0
+console.log(x |= y); // 2
+console.log(x ^= y); // 0
+
+
+// 比较运算符
+// --------------------------
+// 返回布尔值
+console.log(2 > 1); // true
+console.log(2 >= 1); // true
+console.log(2 < 1); // false
+console.log(2 <= 1); // false
+console.log(2 == 1); // false
+console.log(2 === 1); // false
+console.log(2 != 1); // true
+console.log(2 !== 1); // true
+
+// 字符串的比较
+// 按字典顺序比较，逐个字符比较 Unicode码点
+console.log('cat' > 'dog'); // false
+console.log('cat' > 'catlog'); // false
+console.log('cat' > 'Catl'); // true
+
+// 非字符串比较
+// 1 原始类型值
+console.log(5 > '4'); // true
+// 等同于
+console.log(5 > Number('4')); // true
+console.log(true > false); // true
+console.log(2 > true); // true
+// 任何值与NaN比较 都是false
+console.log(1 > NaN); // false
+console.log(1 <= NaN); // false
+console.log('1' > NaN); // false
+console.log('1' <= NaN); // false
+console.log(NaN > NaN); // false
+console.log(NaN <= NaN); // false
+
+// 2 对象
+// 对象先调用 valueOf()，再调用 toString()，再比较
+var x = [2];
+console.log(x > '11'); // true
+console.log(x.valueOf().toString()); // 2
+
+var x = [2];
+console.log(x > '11'); // true
+// 等同于 [2].valueOf().toString() > '11'
+// 即 '2' > '11'
+x.valueOf = function() { return '1' };
+console.log(x > '11'); // false
+// 等同于 [2].valueOf() > '11'
+// 即 '1' > '11'
+console.log([2] > [1]); // true
+// 等同于 [2].valueOf().toString() > [1].valueOf().toString()
+// 即 '2' > '1'
+console.log([2] > [11]); // true
+// 等同于 [2].valueOf().toString() > [11].valueOf().toString()
+// 即 '2' > '11'
+console.log({ x: 2 } >= { x: 1 }); // true
+// 等同于 { x: 2 }.valueOf().toString() >= { x: 1 }.valueOf().toString()
+// 即 '[object Object]' >= '[object Object]'
+
+// 严格相等运算符 ===
+// ==：比较两个值是否相等
+// ===：比较他们是否是同一个值
+// 类型不同，返回false
+console.log(1 == '1'); // true
+console.log(1 === '1'); // false
+console.log(true == 'true'); // true
+console.log(true === 'true'); // false
+// 同类原始类型值，值相同返回true，否则false
+console.log(1 === 0x1); // true
+// NaN与任何值都不相等，包括自身
+console.log(NaN === NaN); // false
+// 复核类型值
+// 比较是否指向同一个地址
+console.log({} === {}); // false
+console.log([] === []); // false
+console.log(function() {} === function() {}); // false
+var v1 = {};
+var v2 = v1;
+console.log(v1 === v2); // true
+// undefined 和 null
+// 和自身严格相等
+console.log(undefined == undefined); // true
+console.log(null == null); // true
+console.log(undefined === undefined); // true
+console.log(null === null); // true
+
+// 严格不相等运算符 !==
+console.log(1 !== '1'); // true
+console.log( !(1 === '1')); // true
+
+// 相等运算符 == 
+// 相同类型时，与 === 一致
+// 不同类型时比较，先转类型，再按 === 规则
+// 原始类型值
+console.log(1 == true); // true
+// 等同于 1 === Number(true)
+console.log(0 == false); // true
+// 等同于 0 === Number(false)
+console.log(2 == true); // false
+// 等同于 2 === Number(true)
+console.log(2 == false); // false
+// 等同于 2 === Number(false)
+console.log('true' == true); // false
+// 等同于 Number('true') === Number(true)
+// 等同于 NaN === 1
+console.log('' == 0); // true
+// 等同于 Number('') === 0
+// 等同于 0 === 0
+console.log('' == false);  // true
+// 等同于 Number('') === Number(false)
+// 等同于 0 === 0
+console.log('1' == true);  // true
+// 等同于 Number('1') === Number(true)
+// 等同于 1 === 1
+console.log('\n  123  \t' == 123); // true
+// 因为字符串转为数字时，省略前置和后置的空格
+
+// 对象与原始类型值比较
+// 对象与数值比较时，对象转为数值
+console.log([1] == 1); // true
+// 等同于 Number([1]) == 1
+// 对象与字符串比较时，对象转为字符串
+console.log([1] == '1'); // true
+// 等同于 String([1]) == '1'
+console.log([1, 2] == '1,2'); // true
+// 等同于 String([1, 2]) == '1,2'
+// 对象与布尔值比较时，两边都转为数值
+console.log([1] == true); // true
+// 等同于 Number([1]) == Number(true)
+console.log([2] == true); // false
+// 等同于 Number([2]) == Number(true)
+
+// undefined 和 null
+// undefined和null与其他类型的值比较时，结果都为false，它们互相比较时结果为true
+console.log(false == null); // false
+console.log(false == undefined); // false
+console.log(0 == null); // false
+console.log(0 == undefined); // false
+console.log(undefined == null); // true
+
+// 不相等运算符 !=
+// 先求相等，再取反
+console.log(1 != '1'); // false
+// 等同于
+console.log( !(1 == '1')); // false
+
+
+// 布尔运算符 !, &&, ||, ?:
+// --------------------------
+
+// 取反运算符 !
+// 以下6个值取反为 true， 其他都为 false
+console.log(!undefined); // true
+console.log(!null); // true
+console.log(!false); // true
+console.log(!0); // true
+console.log(!NaN); // true
+console.log(!''); // true
+
+// 且运算符 &&
+// 第一个运算子是 true，则返回第二个运算子的值；false，则返回第一个运算子的值
+console.log('t' && ''); // ''
+console.log('t' && 'f'); // f
+console.log('t' && (1 + 2)); // 3
+console.log('' && 'f'); // ''
+console.log('' && ''); // ''
+var x = 1;
+// 第一个运算子是false 触发短路 short-cut
+console.log((1 - 1) && ( x += 1)); // 0
+console.log(x); // 1
+// 多个运算子连用时，返回第一个false的运算子的值；如为true，返回最后一个运算子的值
+console.log(true && 'foo' && '' && 4 && 'foo' && true); // ’‘
+console.log(1 && 2 && 3); // 3
+
+// 或运算符 ||
+// 第一个运算子是 true，则返回第一个运算子的值，且不对后边的求值；
+//     false，则返回第二个运算子的值
+console.log('t' || ''); // t
+console.log('t' || 'f'); // t
+console.log('' || 'f'); // f
+console.log('' || ''); // ''
+var x = 1;
+// 第一个运算子是true 触发短路 short-cut
+console.log(true || (x = 2)); // true
+console.log(x); // 1
+// 多个运算子连用时，返回第一个true的运算子的值；如为false，返回最后一个运算子的值
+console.log(false || 0 || '' || 4 || 'foo' || true); // 4
+console.log(false || 0 || ''); // ''
+
+// 三元运算符
+console.log(true ? 'T' : 'F'); // T
+
+
+
+// 二进制位运算符 
+// 二进制或：or |，两个二进制位都为0，则结果0，否则1
+// 二进制与：and &，两个二进制位都为1，则结果1，否则0
+// 二进制否：not ~，对二进制位取反
+// 异或：xor ^ ，两个二进制位不同，则结果1，否则0
+// 左移：left shift <<
+// 右移：right shift >>
+// 头部补零右移：zero filled right shift >>>
+// --------------------------
+
+
+// 其他运算符
+// --------------------------
+// void 运算符
+console.log(void 0); // undefined
+console.log(void(0)); // undefined
+
+
+
+
+
+// 语法专题
+// ==========================
+
+// 数据类型转换
+// --------------------------
+
+// 错误处理机制
+// --------------------------
+
+
+// 编程风格
+// --------------------------
+
+
+// console对象与控制台
+// --------------------------
+
+
+
+
+// 标准库
+// ==========================
+
+// Object对象
+// --------------------------
+// 属性描述对象
+// --------------------------
+// Array对象
+// --------------------------
+// 包装对象
+// --------------------------
+// Boolean对象
+// --------------------------
+// Number对象
+// --------------------------
+// String对象
+// --------------------------
+// Math对象
+// --------------------------
+// Date对象
+// --------------------------
+// RegExp对象
+// --------------------------
+// JSON对象
+// --------------------------
+
+
+
+
+
+// 面向对象编程
+// ==========================
+// 实例对象与new命令
+// --------------------------
+// this关键字
+// --------------------------
+// 对象的继承
+// --------------------------
+// Object对象的相关方法
+// --------------------------
+// 严格模式
+// --------------------------
+
+
+// 异步操作
+// ==========================
+// 概述
+// --------------------------
+// 定时器
+// --------------------------
+// Promise对象
+// --------------------------
+
+
+
+// DOM
+// ==========================
+// 概述
+// --------------------------
+// Node接口
+// --------------------------
+// NodeList接口，HTMLCollection接口
+// --------------------------
+// ParentNode接口，ChildNode接口
+// --------------------------
+// Document节点
+// --------------------------
+// Element节点
+// --------------------------
+// 属性的操作
+// --------------------------
+// Text节点和DocumentFragment节点
+// --------------------------
+// CSS操作
+// --------------------------
+// Mutation ObserverAPI
+// --------------------------
+
+
+
+// 事件
+// ==========================
+// EventTarget接口
+// --------------------------
+// 事件模型
+// --------------------------
+// Event对象
+// --------------------------
+// 鼠标事件
+// --------------------------
+// 键盘事件
+// --------------------------
+// 进度事件
+// --------------------------
+// 表单事件
+// --------------------------
+// 触摸事件
+// --------------------------
+// 拖拉事件
+// --------------------------
+// 其他常见事件
+// --------------------------
+// GlobalEventHandlers接口
+// --------------------------
+
+
+
+// 浏览器模型
+// ==========================
+// 浏览器模型概述
+// --------------------------
+// window对象
+// --------------------------
+// Navigator对象，Screen对象
+// --------------------------
+// Cookie
+// --------------------------
+// XMLHttpRequest对象
+// --------------------------
+// 同源限制
+// --------------------------
+// CORS通信
+// --------------------------
+// Storage接口
+// --------------------------
+// History对象
+// --------------------------
+// Location对象，URL对象，URLSearchParams对象
+// --------------------------
+// ArrayBuffer对象，Blob对象
+// --------------------------
+// File对象，FileList对象，FileReader对象
+// --------------------------
+// 表单，FormData对象
+// --------------------------
+// IndexedDB API
+// --------------------------
+// Web Worker
+// --------------------------
+
+// 附录：网页元素接口
+// ==========================
+
+
+
 
 
 
