@@ -1762,11 +1762,115 @@ console.clear();
 
 // 标准库
 // ==========================
-
 // Object对象
 // --------------------------
+// Object 的方法
+// 定义 Object 本身的方法
+Object.f = function(val) {
+    console.log(val);
+};
+Object.f('abc'); // abc 
+// 定义 Object 实例的方法
+Object.prototype.f = function(val) {
+    console.log(val);
+};
+var obj = new Object();
+obj.f('abc');
+
+// Object() 方法
+var obj = Object();
+// 等同于
+var obj = Object(undefined);
+var obj = Object(null);
+console.log(obj instanceof Object); // true
+
+var obj = Object(1);
+console.log(obj instanceof Object); // true
+console.log(obj instanceof Number); // true
+
+var obj = Object('foo');
+console.log(obj instanceof Object); // true
+console.log(obj instanceof String); // true
+
+var obj = Object(true);
+console.log(obj instanceof Object); // true
+console.log(obj instanceof Boolean); // true
+
+// 判断一个变量是否为对象
+// 因为如果参数是对象的话，他总是等于自身
+function isObject(obj) {
+    return obj === Object(obj);
+}
+
+// 构造函数
+var obj = new Object();
+// 等同于
+var obj = {};
+// 但
+var val = 'abc';
+var obj = new Object(val);
+//不同于
+var obj = Object(val);
+// 两者语义不同
+// new Object(val) 是表示创建了一个新对象，值是val；
+// Object(val) 是把值 val 转成了一个对象
+
+// Object 的静态方法
+Object.keys(obj); // 返回对象自身的所有属性名（非继承）
+Object.getOwnPropertyNames(obj); // 返回对象的所有属性名（包括不可枚举的属性）
+Object.getOwnPropertyDescriptor(); // 获取属性描述
+Object.defineProperty(); // 定义属性
+Object.defineProperties(); // 定义多个属性 
+Object.preventExtensions(); // 防止对象扩展
+Object.isExtensible(); // 判断对象是否可扩展
+Object.seal(); // 禁止对象配置
+Object.isSealed(); // 判断对象是否可配置
+Object.freeze(); // 冻结对象
+Object.isFrozen(); // 判断对象是否被冻结
+Object.create(); // 指定原型和属性，创建对象
+Object.getPrototypeOf(); // 获取对象的 prototype 对象
+
+// Object 的实例方法
+Object.prototype.valueOf(); // 返回对象的值
+Object.prototype.toString(); // 返回对象的字符串形式
+Object.prototype.toLocaleString(); // 同上
+Object.prototype.hasOwnProperty(s); // 判断是否具有该属性
+
+var BLUtils = {};
+
+// 获取类型字符串
+BLUtils.type = function(o) {
+    var s = Object.prototype.toString.call(o);
+    return s.match(/\[object (.*?)\]/)[1].toLowerCase();
+};
+
+// 绑定类型判断函数
+[ 'Null'
+, 'Undefined'
+, 'Object'
+, 'Array'
+, 'String'
+, 'Number'
+, 'Boolean'
+, 'Function'
+, 'RegExp' ].forEach(function(t) {
+    BLUtils['is' + t] = function(o) {
+      return BLUtils.type(o) === t.toLowerCase();
+    };
+});
+console.log(BLUtils.isObject({})); // true
+console.log(BLUtils.isNumber(NaN)); // true
+console.log(BLUtils.isRegExp(/abc/)); // true
+
+
+
 // 属性描述对象
 // --------------------------
+
+
+
+
+
 // Array对象
 // --------------------------
 // 包装对象
@@ -1920,31 +2024,7 @@ console.clear();
 
 
 
-// 判断一个变量是否为对象
-function isObject(value) {
-    return value === Object(value);
-}
 
-Object.keys();
-Object.getOwnPropertyNames();
-Object.getOwnPropertyDescriptor();
-Object.defineProperty();
-Object.defineProperties();
-Object.preventExtensions();
-Object.isExtensible();
-Object.seal();
-Object.isSealed();
-Object.freeze();
-Object.isFrozen();
-Object.create();
-Object.getPrototypeOf();
-
-Object.prototype.valueOf();
-Object.prototype.toString();
-Object.prototype.toLocaleString();
-Object.prototype.hasOwnProperty();
-Object.prototype.isPrototypeOf();
-Object.prototype.propertyIsEnumerable();
 
 
 
