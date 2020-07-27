@@ -1866,13 +1866,314 @@ console.log(BLUtils.isRegExp(/abc/)); // true
 
 // 属性描述对象
 // --------------------------
+// 属性对象（attributes object）
+//     JS 提供了一种内部数据结构来描述对象的属性，控制其行为。
+// 该对象提供6个元属性描述 属性
+// 1 value：值
+// 2 writable：可写
+// 3 enumerable：可枚举
+// 4 configurable：可配置
+// 5 get：
+// 6 set：
 
+// Object.getOwnPropertyDescriptor()
+// 获取（非继承）属性的描述
+var obj = { p: 'a' };
+console.log(Object.getOwnPropertyDescriptor(obj, 'p'));
+// {value: "a", writable: true, enumerable: true, configurable: true}
 
+// Object.getOwnPropertyNames()
+// 获取对象自身的全部属性（包括不能枚举的）
+var obj = Object.defineProperties({},
+{
+    p1: { value: 1, enumerable: true },
+    p2: { value: 2, enumerable: false }
+});
+console.log(Object.getOwnPropertyNames(obj));
+// ["p1", "p2"]
 
+// Object.defineProperty()
+// Object.defineProperties()
+var obj = Object.defineProperty({}, 'p', {
+    value: 123,
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+console.log(obj);
+// {p: 123}
+
+// Object.prototype.propertyIsEnumerable()
+var obj = {};
+obj.p = 123;
+console.log(obj.propertyIsEnumerable('p')); // true
+console.log(obj.propertyIsEnumerable('toString')); // false
+
+// 元属性
+
+// 对象的拷贝
+var copy = function(to, from) {
+    for (var property in from) {
+      if (!from.hasOwnProperty(property)) continue;
+      Object.defineProperty(
+        to,
+        property,
+        Object.getOwnPropertyDescriptor(from, property)
+      );
+    }
+    return to;
+}
+console.log(copy({}, { get a(){ return 1 } }).a);
+
+// 控制对象状态
+// 冻结对象
+// Object.preventExtensions() 弱 无法添加新属性
+// Object.isExtensible() 检测一个对象是否使用了 preventExtensions() 方法
+// Object.seal() 中 无法添加新属性，无法删除旧属性 实质是设置了configurable=false
+// Object.isSealed() 检测一个对象是否使用了 seal() 方法
+// Object.freeze() 强 使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值
+// Object.isFrozen() 检测一个对象是否使用了 freeze() 方法
+Object.preventExtensions(obj);
+Object.seal(obj);
+Object.freeze(obj);
+
+// 局限性
+// 上述三个方法仅能对 对象本身起作用，但不作用于原型，
+//     所以还是可以修改对象的原型来增加修改属性
+//     可以将原型也冻结
+//     还有，冻结并不作用于属性值本身就是对象的对象
+var obj = new Object();
+Object.preventExtensions(obj);
+var proto = Object.getPrototypeOf(obj);
+proto.t = 'hello';
+console.log(obj.t); // hello
+
+// 冻结原型
+var obj = new Object();
+Object.preventExtensions(obj);
+var proto = Object.getPrototypeOf(obj);
+Object.preventExtensions(proto);
+proto.t = 'hello';
+console.log(obj.t); // undefined
+
+// 属性值为对象
+var obj = {
+    foo: 1,
+    bar: ['a', 'b']
+};
+Object.freeze(obj);
+obj.bar.push('c');
+console.log(obj.bar); // ["a", "b", "c"]
+  
 
 
 // Array对象
 // --------------------------
+// 构造函数 bad
+var arr = new Array(2);
+console.log(arr); // [empty × 2]
+
+// 建议使用字面数组 good
+var arr = [1, 2];
+
+// 静态方法
+// Array.isArray() 是否为数组
+
+// 实例方法
+// valueOf() 返回数组本身
+// toString() 返回字符串逗号形式的拼接
+var arr = [1, 2, 3];
+console.log(arr.valueOf()); // [1, 2, 3]
+
+var arr = [1, 2, 3];
+console.log(arr.toString()); // "1,2,3"
+var arr = [1, 2, 3, [4, 5, 6]];
+console.log(arr.toString()); // "1,2,3,4,5,6"
+
+// unshift() 在数组第一个位置添加元素，并返回更新后个数组长度
+// push() 数组末端添加一个元素，返回更新后数组长度
+// shift() 删除数组第一个元素，并返回该元素
+// pop() 删除最后一个元素，并返回该元素
+
+// push()和shift()结合使用，就构成了“先进先出”的队列结构（queue）
+// push()和pop()结合使用，就构成了“后进先出”的队列结构（queue）
+var arr = [];
+console.log(arr.push(1)); // 1
+console.log(arr.push('a')); // 2
+console.log(arr.push(true, {})); // 4
+console.log(arr); // [1, 'a', true, {}]
+console.log(arr.pop()); // {}
+console.log([].pop()); // undefined
+console.log(arr.shift()); // 1
+console.log([].shift()); // undefined
+
+// join() 数组拼接
+var a = [1, 2, 3, 4];
+console.log(a.join(' ')); // 1 2 3 4
+console.log(a.join(' | ')); // 1 | 2 | 3 | 4
+console.log(a.join()); // 1,2,3,4
+console.log([undefined, null].join('#')); // #
+console.log(['a',, 'b'].join('-')); // a--b
+// 通过 call() 可以作用于 字符串 和 类似数组 的对象
+console.log(Array.prototype.join.call('hello', '-')); // "h-e-l-l-o"
+var obj = { 0: 'a', 1: 'b', length: 2 };
+console.log(Array.prototype.join.call(obj, '-')); // 'a-b'
+
+// concat() 数组合并，将新成员添加到尾部，返回新数组
+console.log(['hello'].concat(['world'], ['!'])); // ['hello', 'world', '!']
+console.log([].concat({a: 1}, {b: 2})); // [{a: 1}, {b: 2}]
+// 浅拷贝
+var obj = { a: 1 };
+var oldArray = [obj];
+var newArray = oldArray.concat();
+obj.a = 2;
+console.log(newArray[0].a); // 2
+
+// reverse() 反序 返回新数组
+var a = ['a', 'b', 'c'];
+console.log(a.reverse()); // ['c', 'b', 'a']
+
+// slice() 提取目标数组一部分，返回此数组，原数组不变
+// slice(start, end); 不包括end
+var a = ['a', 'b', 'c'];
+console.log(a.slice(0)); // ["a", "b", "c"]
+console.log(a.slice(1)); // ["b", "c"]
+console.log(a.slice(1, 2)); // ["b"]
+console.log(a.slice(2, 6)); // ["c"]
+console.log(a.slice()); // ["a", "b", "c"]
+console.log(a.slice(-2)); // ["b", "c"]
+console.log(a.slice(-2, -1)); // ["b"]
+// 下标超出范围，返回 []
+console.log(a.slice(4)); // []
+console.log(a.slice(2, 1)); // []
+// 可以通过call将 类似数组转成数组
+console.log(Array.prototype.slice.call({ 0: 'a', 1: 'b', length: 2 })); // ['a', 'b']
+// Array.prototype.slice.call(document.querySelectorAll("div"));
+// Array.prototype.slice.call(arguments);
+
+// splice() 删除原数组一部分成员，并在删除位置添加新成员，返回被删除的元素
+// arr.splice(start, count, addElement1, addElement2, ...);
+var a = ['a', 'b', 'c', 'd', 'e', 'f'];
+console.log(a.splice(4, 2, 'h', 'i')); // ["e", "f"]
+console.log(a); // ["a", "b", "c", "d"]
+
+// sort() 排序 按字典顺序排序，原数组改变
+console.log(['d', 'c', 'b', 'a'].sort()); // ['a', 'b', 'c', 'd']
+console.log([4, 3, 2, 1].sort()); // [1, 2, 3, 4]
+console.log([11, 101].sort()); // [101, 11]
+console.log([10111, 1101, 111].sort()); // [10111, 1101, 111]
+
+// 大于0，2 -> 1；其他，1 -> 2
+var a = [10111, 1101, 111];
+a.sort(function (a, b) {
+    return a - b;
+});
+console.log(a);  // [111, 1101, 10111]
+var a = [
+    { name: "张三", age: 30 },
+    { name: "李四", age: 24 },
+    { name: "王五", age: 28  }
+  ];
+a.sort(function (o1, o2) {
+    return o1.age - o2.age;
+});
+console.log(a);
+// bad
+[1, 4, 2, 6, 0, 6, 2, 6].sort((a, b) => a > b);
+// good
+[1, 4, 2, 6, 0, 6, 2, 6].sort((a, b) => a - b);
+
+// map() 将数组所有成员依次传入参数函数，把每次的执行结果返回成一个新数组。
+// map(function(elem, index, arr) {}) 当前元素，位置，原数组
+var numbers = [1, 2, 3];
+console.log(numbers.map(function(elem, index, arr) {
+  return elem + 1;
+})); // [2, 3, 4]
+console.log(numbers); // [1, 2, 3]
+
+var arr = ['a', 'b', 'c'];
+console.log([1, 2].map(function (e) {
+  return this[e]; // this 指向 arr
+}, arr)); // ['b', 'c']
+
+// forEach() 同map相似，无返回值
+function log(element, index, array) {
+    console.log('[' + index + '] = ' + element);
+}
+[2, 5, 9].forEach(log);
+// [0] = 2
+// [1] = 5
+// [2] = 9
+var out = [];
+[1, 2, 3].forEach(function(elem, index, arr) {
+    this.push(elem * elem); // this 指向 out
+}, out);
+console.log(out); // [1, 4, 9]
+
+// filter() 过滤数组成员，满足条件的成员组成一个新数组返回
+console.log([1, 2, 3, 4, 5].filter(function(elem, index, arr) {
+    return (elem > 3);
+})); // [4, 5]
+var arr = [0, 1, 'a', false];
+console.log(arr.filter(Boolean)); // [1, 'a']
+
+// some() 一个成员的返回值是true，则整个some方法的返回值就是true，否则返回false
+// every() 所有成员的返回值都是true，整个every方法才返回true，否则返回false
+var arr = [1, 2, 3, 4, 5];
+console.log(arr.some(function (elem, index, arr) {
+  return elem >= 3;
+})); // true
+var arr = [1, 2, 3, 4, 5];
+console.log(arr.every(function (elem, index, arr) {
+  return elem >= 3;
+})); // false
+// 对于空数组，some方法返回false，every方法返回true，回调函数都不会执行
+function isEven(x) { return x % 2 === 0 }
+console.log([].some(isEven)); // false
+console.log([].every(isEven)); // true
+
+// reduce() L -> R
+// reduceRight() R -> L
+console.log([1, 2, 3, 4, 5].reduce(function (a, b) {
+    console.log(a, b);
+    return a + b;
+}));
+// 1 2
+// 3 3
+// 6 4
+// 10 5
+//最后结果：15
+console.log([1, 2, 3, 4, 5].reduce(function (a, b) {
+    return a + b;
+}, 10)); // 10 是初值    
+// 25
+
+// indexOf() 返回参数元素第一次出现的位置，无 -1
+// lastIndexOf() 返回参数元素最后一次出现的位置，无 -1
+// indexOf(elem, start)
+var a = ['a', 'b', 'c'];
+console.log(a.indexOf('b')); // 1
+console.log(a.indexOf('y')); // -1
+console.log(a.lastIndexOf('a')); // 0
+
+// 链式调用
+var users = [
+    {name: 'tom', email: 'tom@example.com'},
+    {name: 'peter', email: 'peter@example.com'}
+];
+users.map(function(user) {
+    return user.email;
+})
+.filter(function(email) {
+    return /^t/.test(email);
+})
+.forEach(function(email) {
+    console.log(email);
+});
+// "tom@example.com"
+  
+
+
 // 包装对象
 // --------------------------
 // Boolean对象
